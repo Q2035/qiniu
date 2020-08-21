@@ -9,6 +9,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.hellooooo.qiniu.config.QiniuConfig;
+import top.hellooooo.qiniu.config.SingleAuth;
 
 /**
  * @Author Q
@@ -22,10 +23,11 @@ public class Uptoken {
 
     private String uptoken;
 
+    private Auth auth = SingleAuth.getInstance();
+
     @Autowired
     public Uptoken(QiniuConfig qiniuConfig){
-        Auth auth = Auth.create(qiniuConfig.getQiniuAccessKey(), qiniuConfig.getQiniuSecretKey());
-//
+//        获取upToken
         uptoken = auth.uploadToken(qiniuConfig.getQiniuBucketName());
         logger.info("Get uptoken successfully {}", uptoken);
     }

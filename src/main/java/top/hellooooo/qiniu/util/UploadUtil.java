@@ -19,17 +19,15 @@ import top.hellooooo.qiniu.token.Uptoken;
  * @Description
  */
 @Component
-public class UploadUtil {
-
-//    这里似乎和文档提供的不一样
-    private Configuration configuration = new Configuration(Zone.autoZone());
-
-    private UploadManager uploadManager = new UploadManager(configuration);
+public class UploadUtil extends BaseUtil{
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private Uptoken uptoken;
+
+    @Autowired
+    private FileNameChanger fileNameChanger;
 
     /**
      * 这里传入的是详细的文件名位置：eg:/home/root/image/a.jpg
@@ -38,11 +36,7 @@ public class UploadUtil {
     public void upload(String uploadFilePath){
         try {
             logger.info("try to upload {}", uploadFilePath);
-            String basePath = System.getProperty("user.dir");
-            String fileName;
-//            取出文件后半部分
-            fileName = uploadFilePath.replace(basePath, "").replaceAll("\\\\", "/").substring(1);
-            Response response = uploadManager.put(uploadFilePath, fileName, uptoken.getUptoken());
+            Response response = uploadManager.put(uploadFilePath, fileNameChanger.changeFilePathToFile(uploadFilePath), uptoken.getUptoken());
             DefaultPutRet defaultPutRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
             logger.info("key {} hash {}", defaultPutRet.key, defaultPutRet.hash);
         } catch (QiniuException e) {

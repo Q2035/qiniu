@@ -17,4 +17,5 @@ public class BaseConfig {
     public QiniuConfig qiniuConfig(){
         return new QiniuConfig();
     }
+
 }

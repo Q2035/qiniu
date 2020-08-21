@@ -22,7 +22,7 @@ public class QiniuConfig {
 
     private String QiniuBucketName;
 
-    Properties properties = new Properties();
+    private Properties properties = new Properties();
 
     public QiniuConfig(){
         InputStream inputStream = getClass().getResourceAsStream("/application.properties");
@@ -35,6 +35,10 @@ public class QiniuConfig {
             logger.error("The properties info is illegal");
             e.printStackTrace();
         }
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 
     public String getQiniuBucketName() {
