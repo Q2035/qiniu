@@ -16,9 +16,11 @@ public class QiNiuApplication {
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(BaseConfig.class);
 //        当前工作路径
         UploadUtil uploadUtil = applicationContext.getBean(UploadUtil.class);
-//        uploadUtil.upload("D:\\Private\\github\\qiniu\\image\\yunduo.png");
+        uploadUtil.batchUpload();
+//        uploadUtil.upload("D:\\Private\\github\\q\\2020\\08\\SortAlgorithm\\image\\20181225181834232.gif");
         FilesInfoUtil bean = applicationContext.getBean(FilesInfoUtil.class);
 //        bean.writeSpecifiedFileInfo("D:\\Private\\github\\qiniu\\image\\yunduo.png");
-        bean.getAllFileInfo();
+//        bean.getAllFileInfo();
+
     }
 }

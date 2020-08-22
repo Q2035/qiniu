@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import top.hellooooo.qiniu.config.QiniuConfig;
+import top.hellooooo.qiniu.config.QiniuKeys;
 import top.hellooooo.qiniu.token.Uptoken;
 
 import java.io.File;
@@ -29,11 +31,14 @@ public class UploadUtil extends BaseUtil{
 
     private final Uptoken uptoken;
 
+    private final QiniuConfig qiniuConfig;
+
     private final FileNameChanger fileNameChanger;
 
-    public UploadUtil(Uptoken uptoken, FileNameChanger fileNameChanger) {
+    public UploadUtil(Uptoken uptoken, FileNameChanger fileNameChanger, QiniuConfig qiniuConfig) {
         this.uptoken = uptoken;
         this.fileNameChanger = fileNameChanger;
+        this.qiniuConfig = qiniuConfig;
     }
 
     /**
@@ -43,9 +48,12 @@ public class UploadUtil extends BaseUtil{
     public void upload(String uploadFilePath){
         try {
             logger.info("try to upload {}", uploadFilePath);
-            Response response = uploadManager.put(uploadFilePath, fileNameChanger.changeFilePathToFile(uploadFilePath), uptoken.getUptoken());
+            String cdnURL = (String) qiniuConfig.getProperties().get(QiniuKeys.qiniuCdnURL);
+            String resultFileName = fileNameChanger.changeFilePathToFile(uploadFilePath);
+            Response response = zone0UploadManager.put(uploadFilePath, resultFileName, uptoken.getUptoken());
             DefaultPutRet defaultPutRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
             logger.info("key {} hash {}", defaultPutRet.key, defaultPutRet.hash);
+            logger.info("the url is {}",cdnURL + resultFileName);
         } catch (QiniuException e) {
             Response r = e.response;
             logger.error(r.toString());
@@ -55,10 +63,16 @@ public class UploadUtil extends BaseUtil{
                 qiniuException.printStackTrace();
             }
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public void batchUpload(String filePath) {
+    /**
+     * 上传所有指定文件夹下的所有文件
+     */
+    public void batchUpload() {
+        String filePath = qiniuConfig.getProperties().getProperty(QiniuKeys.baseUploadFilePath);
         File baseFilePath = new File(filePath);
         if (!baseFilePath.isDirectory()) {
             logger.warn("Sorry, '{}' is not directory.", baseFilePath);
@@ -67,7 +81,8 @@ public class UploadUtil extends BaseUtil{
         List<File> list = new ArrayList<>(16);
 //        列出filePath目录及其子目录下的所有文件
         getFoldersAndSubFolderFiles(baseFilePath, list);
-
+//        遍历所有文件
+        list.forEach(file -> upload(file.getAbsolutePath()));
     }
 
     /**

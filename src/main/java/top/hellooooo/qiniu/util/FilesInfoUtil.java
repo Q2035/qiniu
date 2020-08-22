@@ -50,9 +50,9 @@ public class FilesInfoUtil extends BaseUtil{
      * 将指定的文件信息写入文本
      * @param fileName
      */
-    public void writeSpecifiedFileInfo(String fileName) {
+    public void writeSpecifiedFileInfo(String fileName) throws Exception {
         String resultName = fileNameChanger.changeFilePathToFile(fileName);
-        BucketManager bucketManager = new BucketManager(auth, configuration);
+        BucketManager bucketManager = new BucketManager(auth, autoZoneConfiguration);
         try {
             FileInfo fileInfo = bucketManager.stat(qiniuConfig.getQiniuBucketName(), resultName);
             logger.info("hash:{} fsize:{} mimeType:{} putTime:{}", fileInfo.hash, fileInfo.fsize, fileInfo.mimeType, fileInfo.putTime);
@@ -65,7 +65,7 @@ public class FilesInfoUtil extends BaseUtil{
     }
 
     public void getAllFileInfo() {
-        BucketManager bucketManager = new BucketManager(auth, configuration);
+        BucketManager bucketManager = new BucketManager(auth, zone0Configuration);
 //        官方文档抄的
 //      文件名前缀
         String prefix = "";

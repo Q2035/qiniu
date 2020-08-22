@@ -16,4 +16,11 @@ public class QiniuKeys {
 
 //    本地输出文件
     public final static String outputFilePath = "qiniu.outputFilePath";
+
+    public final static String baseUploadFilePath = "qiniu.baseUploadFilePath";
+
+    public final static String specifiedFileHeader = "qiniu.specifiedFileHeader";
+
+    public final static String qiniuCdnURL = "qiniu.cdnURL";
+
 }
