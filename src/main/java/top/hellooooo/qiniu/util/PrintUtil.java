@@ -6,7 +6,6 @@ import top.hellooooo.qiniu.config.QiniuConfig;
 import top.hellooooo.qiniu.config.QiniuKeys;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 
 /**
  * @Author Q
@@ -23,6 +22,10 @@ public class PrintUtil {
         String outputFilePath = qiniuConfig.getProperties().getProperty(QiniuKeys.outputFilePath);
         File destFile = new File(outputFilePath);
         if (!destFile.exists()) {
+            File parentFile = destFile.getParentFile();
+            if (!parentFile.exists()) {
+                parentFile.mkdirs();
+            }
             try {
                 destFile.createNewFile();
             } catch (IOException e) {
@@ -46,7 +49,6 @@ public class PrintUtil {
      * @param format
      */
     public void write(String format, Object... params) {
-
         try {
             outputStreamWriter.write(parsePlaceholders(format, params));
             outputStreamWriter.write("\n");
@@ -72,7 +74,7 @@ public class PrintUtil {
         for (int i = 0; i < chars.length - 1; i++) {
             if (chars[i] == '{' && chars[i + 1] == '}' && tryToPlace) {
 //                直接调用toString方法
-                res.append(params[tempCount++].toString());
+                res.append(params[tempCount++]);
 //                占位符数目不匹配
                 if (tempCount > params.length - 1) {
                     tryToPlace = false;

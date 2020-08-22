@@ -18,6 +18,7 @@ public class QiNiuApplication {
         UploadUtil uploadUtil = applicationContext.getBean(UploadUtil.class);
 //        uploadUtil.upload("D:\\Private\\github\\qiniu\\image\\yunduo.png");
         FilesInfoUtil bean = applicationContext.getBean(FilesInfoUtil.class);
-        bean.writeSpecifiedFileInfo("D:\\Private\\github\\qiniu\\image\\yunduo.png");
+//        bean.writeSpecifiedFileInfo("D:\\Private\\github\\qiniu\\image\\yunduo.png");
+        bean.getAllFileInfo();
     }
 }
