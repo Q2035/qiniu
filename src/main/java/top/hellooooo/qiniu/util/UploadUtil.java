@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.hellooooo.qiniu.token.Uptoken;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Author Q
  * @Date 21/08/2020 09:04
@@ -23,11 +27,14 @@ public class UploadUtil extends BaseUtil{
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private Uptoken uptoken;
+    private final Uptoken uptoken;
 
-    @Autowired
-    private FileNameChanger fileNameChanger;
+    private final FileNameChanger fileNameChanger;
+
+    public UploadUtil(Uptoken uptoken, FileNameChanger fileNameChanger) {
+        this.uptoken = uptoken;
+        this.fileNameChanger = fileNameChanger;
+    }
 
     /**
      * 这里传入的是详细的文件名位置：eg:/home/root/image/a.jpg
@@ -48,6 +55,35 @@ public class UploadUtil extends BaseUtil{
                 qiniuException.printStackTrace();
             }
             e.printStackTrace();
+        }
+    }
+
+    public void batchUpload(String filePath) {
+        File baseFilePath = new File(filePath);
+        if (!baseFilePath.isDirectory()) {
+            logger.warn("Sorry, '{}' is not directory.", baseFilePath);
+            return;
+        }
+        List<File> list = new ArrayList<>(16);
+//        列出filePath目录及其子目录下的所有文件
+        getFoldersAndSubFolderFiles(baseFilePath, list);
+
+    }
+
+    /**
+     * 递归获取指定目录及其子目录下所有文件
+     * @param baseFile
+     * @param list
+     */
+    private void getFoldersAndSubFolderFiles(File baseFile, List list){
+        File[] files = baseFile.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                getFoldersAndSubFolderFiles(file, list);
+            }
+            if (file.isFile()) {
+                list.add(file);
+            }
         }
     }
 }
